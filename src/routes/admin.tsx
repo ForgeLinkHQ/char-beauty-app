@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site/site-header";
@@ -13,6 +13,18 @@ export const Route = createFileRoute("/admin")({
   }),
   component: AdminHome,
 });
+
+const CARDS = [
+  { to: "#calendar", label: "Calendar", icon: Calendar, desc: "See the week at a glance and reschedule with a drag." },
+  { to: "#bookings", label: "Bookings", icon: Sparkles, desc: "Every upcoming and past appointment." },
+  { to: "#clients", label: "Clients", icon: Users, desc: "Records, tiers, tags, segments and relationships." },
+  { to: "#services", label: "Services", icon: Scissors, desc: "Menu, prices, durations and deposits." },
+  { to: "#marketing", label: "Marketing", icon: Tag, desc: "Segments, offers, referrals, gift cards, automations." },
+  { to: "#inbox", label: "Inbox", icon: Mail, desc: "Enquiries, replies and email log." },
+  { to: "#reports", label: "Reports", icon: BarChart3, desc: "Revenue, retention, cohort and LTV." },
+  { to: "#settings", label: "Settings", icon: Settings, desc: "Studio hours, forms, integrations." },
+];
+
 
 const CARDS = [
   { to: "/admin/calendar", label: "Calendar", icon: Calendar, desc: "See the week at a glance and reschedule with a drag." },
