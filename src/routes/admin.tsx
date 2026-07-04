@@ -26,17 +26,6 @@ const CARDS = [
 ];
 
 
-const CARDS = [
-  { to: "/admin/calendar", label: "Calendar", icon: Calendar, desc: "See the week at a glance and reschedule with a drag." },
-  { to: "/admin/bookings", label: "Bookings", icon: Sparkles, desc: "Every upcoming and past appointment." },
-  { to: "/admin/clients", label: "Clients", icon: Users, desc: "Records, tiers, tags, segments and relationships." },
-  { to: "/admin/services", label: "Services", icon: Scissors, desc: "Menu, prices, durations and deposits." },
-  { to: "/admin/marketing", label: "Marketing", icon: Tag, desc: "Segments, offers, referrals, gift cards, automations." },
-  { to: "/admin/inbox", label: "Inbox", icon: Mail, desc: "Enquiries, replies and email log." },
-  { to: "/admin/reports", label: "Reports", icon: BarChart3, desc: "Revenue, retention, cohort and LTV." },
-  { to: "/admin/settings", label: "Settings", icon: Settings, desc: "Studio hours, forms, integrations." },
-];
-
 function AdminHome() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
@@ -84,14 +73,16 @@ function AdminHome() {
             {CARDS.map((c) => {
               const Icon = c.icon;
               return (
-                <Link key={c.to} to={c.to} className="group block border border-border p-8 transition-colors hover:border-accent">
+                <div key={c.to} className="group block border border-border p-8">
                   <Icon className="size-6 text-accent" />
-                  <h2 className="mt-6 font-serif text-2xl group-hover:text-accent transition-colors">{c.label}</h2>
+                  <h2 className="mt-6 font-serif text-2xl">{c.label}</h2>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
-                </Link>
+                  <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Coming soon</p>
+                </div>
               );
             })}
           </div>
+
           <p className="mt-16 text-xs text-muted-foreground text-center">
             More studio tools land as we build out the platform. Suggestions welcome — drop C. a note.
           </p>
