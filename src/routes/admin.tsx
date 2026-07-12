@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site/site-header";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/admin")({
 });
 
 const CARDS = [
-  { to: "#calendar", label: "Calendar", icon: Calendar, desc: "See the week at a glance and reschedule with a drag." },
+  { to: "/admin/booking", label: "Booking Settings", icon: Calendar, desc: "Studio hours, blackout periods, hold duration and availability grid.", live: true },
   { to: "#bookings", label: "Bookings", icon: Sparkles, desc: "Every upcoming and past appointment." },
   { to: "#clients", label: "Clients", icon: Users, desc: "Records, tiers, tags, segments and relationships." },
   { to: "#services", label: "Services", icon: Scissors, desc: "Menu, prices, durations and deposits." },
@@ -72,13 +72,16 @@ function AdminHome() {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {CARDS.map((c) => {
               const Icon = c.icon;
+              const isLive = "live" in c && c.live;
+              const Wrapper = isLive ? Link : "div";
+              const wrapperProps = isLive ? { to: c.to } : {};
               return (
-                <div key={c.to} className="group block border border-border p-8">
+                <Wrapper key={c.to} {...(wrapperProps as object)} className={`group block border border-border p-8 ${isLive ? "hover:border-accent transition-colors cursor-pointer" : ""}`}>
                   <Icon className="size-6 text-accent" />
                   <h2 className="mt-6 font-serif text-2xl">{c.label}</h2>
                   <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
-                  <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Coming soon</p>
-                </div>
+                  {!isLive && <p className="mt-4 text-[10px] uppercase tracking-[0.28em] text-muted-foreground">Coming soon</p>}
+                </Wrapper>
               );
             })}
           </div>

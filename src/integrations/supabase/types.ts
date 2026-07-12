@@ -12,47 +12,138 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
+      blackout_periods: {
+        Row: {
+          created_at: string
+          ends_at: string
+          id: string
+          reason: string | null
+          starts_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_at: string
+          id?: string
+          reason?: string | null
+          starts_at: string
+        }
+        Update: {
+          created_at?: string
+          ends_at?: string
+          id?: string
+          reason?: string | null
+          starts_at?: string
+        }
+        Relationships: []
+      }
+      booking_settings: {
+        Row: {
+          hold_minutes: number
+          id: number
+          max_advance_days: number
+          min_notice_hours: number
+          slot_granularity_minutes: number
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          hold_minutes?: number
+          id?: number
+          max_advance_days?: number
+          min_notice_hours?: number
+          slot_granularity_minutes?: number
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          hold_minutes?: number
+          id?: number
+          max_advance_days?: number
+          min_notice_hours?: number
+          slot_granularity_minutes?: number
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
+          blocked_until: string
+          buffer_minutes: number
           client_id: string | null
           created_at: string
           deposit_gbp: number
           deposit_paid: boolean
           ends_at: string
+          hold_expires_at: string | null
           id: string
           notes: string | null
           price_gbp: number
           service_id: string
+          source: string
           starts_at: string
           status: Database["public"]["Enums"]["booking_status"]
           updated_at: string
         }
         Insert: {
+          blocked_until: string
+          buffer_minutes?: number
           client_id?: string | null
           created_at?: string
           deposit_gbp?: number
           deposit_paid?: boolean
           ends_at: string
+          hold_expires_at?: string | null
           id?: string
           notes?: string | null
           price_gbp: number
           service_id: string
+          source?: string
           starts_at: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
         }
         Update: {
+          blocked_until?: string
+          buffer_minutes?: number
           client_id?: string | null
           created_at?: string
           deposit_gbp?: number
           deposit_paid?: boolean
           ends_at?: string
+          hold_expires_at?: string | null
           id?: string
           notes?: string | null
           price_gbp?: number
           service_id?: string
+          source?: string
           starts_at?: string
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string
@@ -73,6 +164,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      business_hours: {
+        Row: {
+          closes_at: string
+          created_at: string
+          day_of_week: number
+          id: string
+          opens_at: string
+        }
+        Insert: {
+          closes_at: string
+          created_at?: string
+          day_of_week: number
+          id?: string
+          opens_at: string
+        }
+        Update: {
+          closes_at?: string
+          created_at?: string
+          day_of_week?: number
+          id?: string
+          opens_at?: string
+        }
+        Relationships: []
       }
       client_tags: {
         Row: {
@@ -178,6 +293,53 @@ export type Database = {
           visits_count?: number
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          amount_gbp: number
+          booking_id: string
+          created_at: string
+          currency: string
+          id: string
+          kind: Database["public"]["Enums"]["payment_kind"]
+          status: Database["public"]["Enums"]["payment_status"]
+          stripe_checkout_session_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_gbp: number
+          booking_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["payment_kind"]
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_gbp?: number
+          booking_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["payment_kind"]
+          status?: Database["public"]["Enums"]["payment_status"]
+          stripe_checkout_session_id?: string | null
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       segment_members: {
         Row: {
@@ -308,6 +470,27 @@ export type Database = {
         }
         Relationships: []
       }
+      stripe_events: {
+        Row: {
+          event_id: string
+          payload: Json
+          received_at: string
+          type: string
+        }
+        Insert: {
+          event_id: string
+          payload: Json
+          received_at?: string
+          type: string
+        }
+        Update: {
+          event_id?: string
+          payload?: Json
+          received_at?: string
+          type?: string
+        }
+        Relationships: []
+      }
       tags: {
         Row: {
           colour: string
@@ -361,12 +544,40 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_expired_holds: { Args: never; Returns: number }
+      get_available_slots: {
+        Args: { _day: string; _service_slug: string }
+        Returns: {
+          slot_starts_at: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      reserve_slot: {
+        Args: {
+          _email: string
+          _first_name: string
+          _last_name: string
+          _marketing_consent?: boolean
+          _notes?: string
+          _phone?: string
+          _service_slug: string
+          _starts_at: string
+        }
+        Returns: Json
+      }
+      slot_unavailable_reason: {
+        Args: {
+          _service: Database["public"]["Tables"]["services"]["Row"]
+          _skip_patch_lead?: boolean
+          _starts_at: string
+        }
+        Returns: string
       }
     }
     Enums: {
@@ -386,6 +597,13 @@ export type Database = {
         | "seasonal"
         | "lapsed"
         | "blocked"
+      payment_kind: "deposit" | "balance" | "refund"
+      payment_status:
+        | "requires_payment"
+        | "processing"
+        | "succeeded"
+        | "failed"
+        | "refunded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -511,6 +729,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["owner", "admin"],
@@ -530,6 +751,14 @@ export const Constants = {
         "seasonal",
         "lapsed",
         "blocked",
+      ],
+      payment_kind: ["deposit", "balance", "refund"],
+      payment_status: [
+        "requires_payment",
+        "processing",
+        "succeeded",
+        "failed",
+        "refunded",
       ],
     },
   },

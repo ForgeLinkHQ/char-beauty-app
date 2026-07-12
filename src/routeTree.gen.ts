@@ -20,6 +20,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LegalTermsRouteImport } from './routes/legal.terms'
 import { Route as LegalPrivacyRouteImport } from './routes/legal.privacy'
+import { Route as AdminBookingRouteImport } from './routes/admin.booking'
 
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
@@ -76,30 +77,37 @@ const LegalPrivacyRoute = LegalPrivacyRouteImport.update({
   path: '/legal/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminBookingRoute = AdminBookingRouteImport.update({
+  id: '/booking',
+  path: '/booking',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/offers': typeof OffersRoute
   '/services': typeof ServicesRoute
+  '/admin/booking': typeof AdminBookingRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/offers': typeof OffersRoute
   '/services': typeof ServicesRoute
+  '/admin/booking': typeof AdminBookingRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
 }
@@ -107,13 +115,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/book': typeof BookRoute
   '/contact': typeof ContactRoute
   '/gallery': typeof GalleryRoute
   '/offers': typeof OffersRoute
   '/services': typeof ServicesRoute
+  '/admin/booking': typeof AdminBookingRoute
   '/legal/privacy': typeof LegalPrivacyRoute
   '/legal/terms': typeof LegalTermsRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/offers'
     | '/services'
+    | '/admin/booking'
     | '/legal/privacy'
     | '/legal/terms'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/offers'
     | '/services'
+    | '/admin/booking'
     | '/legal/privacy'
     | '/legal/terms'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/offers'
     | '/services'
+    | '/admin/booking'
     | '/legal/privacy'
     | '/legal/terms'
   fileRoutesById: FileRoutesById
@@ -162,7 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   BookRoute: typeof BookRoute
   ContactRoute: typeof ContactRoute
@@ -252,13 +264,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LegalPrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/booking': {
+      id: '/admin/booking'
+      path: '/booking'
+      fullPath: '/admin/booking'
+      preLoaderRoute: typeof AdminBookingRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
+
+interface AdminRouteChildren {
+  AdminBookingRoute: typeof AdminBookingRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminBookingRoute: AdminBookingRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   BookRoute: BookRoute,
   ContactRoute: ContactRoute,
